@@ -52,7 +52,7 @@ titan.get('/',(req,res)=>{
 })
 
 titan.get('/shooter',async(req,res)=>{
-  const result = await pool.query("SELECT *FROM score");
+  const result = await pool.query("SELECT *FROM score ORDER BY id ASC");
   res.json(result.rows);
 })
 
@@ -72,10 +72,30 @@ titan.post('/playerpoint',async(req,res)=>{
 
 })
 
-titan.patch('/playerpoint/:id',async(req,res)=>{
+//always remember url theke je data pai jemon playerpoint/:id eikhane id holo params 
+// easy way to remember- pool.query("SQL QUERY", [VALUES])
+titan.patch("/playerpoint/:id",async(req,res)=>{
+  const result = await pool.query(
+    `UPDATE score
+     SET points=points+3
+     WHERE id = $1
+     RETURNING *`,
+    [req.params.id]
+  );
 
-  const result = await pool.query(``)
-  
+  res.json(result.rows[0]);
+})
+
+//now i have to make veey important api which is delete api
+
+titan.delete("/deleteplayer/:id", async(req,res)=>{
+  const result = await pool.query(
+    `Delete from score
+    WHERE id=$1
+    RETURNING *`,
+    [req.params.id]
+  );
+  res.json(result.rows[0]);
 })
 
 
